@@ -259,3 +259,26 @@ Feel free to extend this project by adding more complex features such as real-ti
 - **Conclusion**: Wraps up with a note on how to move forward into more advanced MEV strategies.
 
 This README provides a clear structure for users who are just getting started with blockchain interaction and MEV. It allows for easy navigation as they progress from simple concepts to more advanced strategies.
+
+
+What We Can Do with transactions Object
+Each block contains a list of transactions, and each transaction holds key information. Here are some actions we can take:
+
+>1. Extract Basic Transaction Data
+>2. Each transaction has essential fields:
+```
+hash: Unique identifier for the transaction.
+
+from: Sender's address.
+
+to: Receiver's address (could be a wallet or smart contract).
+
+value: Amount of native cryptocurrency (BNB/ETH) transferred.
+
+gasPrice: Price paid per unit of gas.
+
+gasLimit: Maximum gas allowed for execution.
+
+input: Encoded data for contract calls.
+```
+👉 Example Code to Log All Transactions in the Latest Block:
