@@ -282,3 +282,241 @@ gasLimit: Maximum gas allowed for execution.
 input: Encoded data for contract calls.
 ```
 👉 Example Code to Log All "transactions"[ array in the  RAW response json format under Latest Block:]
+
+Transaction Data Documentation
+
+Overview
+
+This document provides details on the transaction data that can be extracted from the transactions array when fetching the latest block from Binance Smart Chain (BSC) using ethers.js.
+
+Fetching Transactions
+
+Each block contains multiple transactions, which can be accessed from the transactions array. Below are the details that can be retrieved for each transaction.
+
+Transaction Fields
+
+For each transaction inside the block, the following data points are available:
+
+1. Basic Transaction Details
+
+hash: Unique transaction identifier (TX Hash).
+
+from: Address of the sender.
+
+to: Address of the recipient (or null if it's a contract deployment).
+
+nonce: Sender's transaction count (used for ordering transactions from an address).
+
+value: Amount of BNB transferred in the transaction.
+
+data: Raw input data (used for contract calls or token transfers).
+
+2. Gas Information
+
+gasPrice: Price of gas paid per unit (in Gwei).
+
+gasLimit: Maximum gas allowed for the transaction.
+
+maxPriorityFeePerGas: (EIP-1559) Priority fee for miners (if applicable).
+
+maxFeePerGas: (EIP-1559) Maximum fee the sender is willing to pay.
+
+3. Transaction Type
+
+type: Type of transaction (Legacy or EIP-1559).
+
+chainId: The blockchain network ID (e.g., 56 for BSC Mainnet).
+
+4. Block Details
+
+blockNumber: The block in which the transaction was included.
+
+blockHash: The hash of the block containing this transaction.
+
+timestamp: The time when the block was mined.
+
+5. Transaction Receipt (Post-Mining Data)
+
+status: Indicates success (1) or failure (0) of the transaction.
+
+gasUsed: The actual gas consumed during execution.
+
+cumulativeGasUsed: Total gas used in the block up to this transaction.
+
+contractAddress: If it's a contract creation, this is the deployed contract address.
+
+logs: An array of event logs emitted during execution.
+
+logsBloom: A bloom filter for event logs, used for indexing.
+
+6. Event Logs (Inside Receipt Logs)
+
+address: Contract address emitting the event.
+
+topics: Indexed event parameters.
+
+data: Additional event data.
+
+Example Usage :
+
+```javascript
+const { ethers } = require("ethers");
+const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
+
+async function fetchTransactions() {
+  const block = await provider.getBlockWithTransactions("latest");
+  console.log(`Block Number: ${block.number}`);
+  
+  block.transactions.forEach((tx, index) => {
+    console.log(`Transaction ${index + 1}:`);
+    console.log(`  Hash: ${tx.hash}`);
+    console.log(`  From: ${tx.from}`);
+    console.log(`  To: ${tx.to ? tx.to : "Contract Deployment"}`);
+    console.log(`  Value: ${ethers.utils.formatEther(tx.value)} BNB`);
+  });
+}
+
+fetchTransactions();
+```
+
+Example Output response after extract transactions array for each tx :
+
+```javascript
+Transaction 281
+  🔹 Hash: 0x693f9146478cb02843c8e2f032ac079dfa532fbdc1946fd13328d0bd9c3b9aab  
+  🔹 From: 0xEdd7dac785Fd3B15A726440cC1Be40160E4b54F0
+  🔹 To: 0x4B52e831107Db187E64498D0DF18c72dAde57200
+  💸 Value: 0.0 BNB
+  🔢 Nonce: 498999
+  📜 Data: 0x00000000db77fa37766dbf0d74bc9f0ad497f7cc887ea32270ccf4cd3caf08b53577d2c58e5e22b6e3294bada527a61703d82139f8a06bc30097cc9caa2df5a6137e4df937e7d1f400
+  ⛽ Gas Price: 0.0 Gwei
+  ⛽ Gas Limit: 223710
+  🔥 Max Priority Fee: Legacy TX
+  🔥 Max Fee Per Gas: Legacy TX
+  🔄 Transaction Type: Legacy
+  🏁 Receipt Status: ✅ Success
+  ⛽ Gas Used: 194749
+  🔗 Logs Count: 10
+  📜 Event Logs:
+    - Log 1:
+      🔗 Address: 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c
+      📄 Data: 0x0000000000000000000000000000000000000000000000000000a49ee5975225
+      🏷 Topics: 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523 
+b3ef,0x000000000000000000000000a527a61703d82139f8a06bc30097cc9caa2df5a6,0x0000000000000000000000004b52e831107db187e64498d0df18c72dade57200
+    - Log 2:
+      🔗 Address: 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c
+      📄 Data: 0x0000000000000000000000000000000000000000000000000000a38071032f2d
+      🏷 Topics: 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523 
+b3ef,0x0000000000000000000000004b52e831107db187e64498d0df18c72dade57200,0x000000000000000000000000db77fa37766dbf0d74bc9f0ad497f7cc887ea322
+    - Log 3:
+      🔗 Address: 0x2F3391AeBE27393aBa0a790aa5E1577fEA0361c2
+      📄 Data: 0x0000000000000000000000000000000000000000000000cbf3fc53bd20e6b5e6
+      🏷 Topics: 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523
+b3ef,0x000000000000000000000000db77fa37766dbf0d74bc9f0ad497f7cc887ea322,0x00000000000000000000000070ccf4cd3caf08b53577d2c58e5e22b6e3294bad
+    - Log 4:
+      🔗 Address: 0xDB77fa37766DbF0D74bC9f0ad497F7cC887EA322
+      📄 Data: 0x0000000000000000000000000000000000000000000847f830777c5e5ecbeac600000000000000000000000000000000000000000000000006a0bde46169c771
+      🏷 Topics: 0x1c411e9a96e071241c2f21f7726b17ae89e3cab4c78be50e062b03a9fffb 
+bad1
+    - Log 5:
+      🔗 Address: 0xDB77fa37766DbF0D74bC9f0ad497F7cC887EA322
+      📄 Data: 0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a38071032f2d0000000000000000000000000000000000000000000000cbf3fc53bd20e6b5e60000000000000000000000000000000000000000000000000000000000000000
+      🏷 Topics: 0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159 
+d822,0x0000000000000000000000004b52e831107db187e64498d0df18c72dade57200,0x00000000000000000000000070ccf4cd3caf08b53577d2c58e5e22b6e3294bad
+    - Log 6:
+      🔗 Address: 0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82
+      📄 Data: 0x000000000000000000000000000000000000000000000000009469b8957371ae
+      🏷 Topics: 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523 
+b3ef,0x00000000000000000000000070ccf4cd3caf08b53577d2c58e5e22b6e3294bad,0x000000000000000000000000a527a61703d82139f8a06bc30097cc9caa2df5a6
+    - Log 7:
+      🔗 Address: 0x70CcF4cD3CaF08B53577d2c58e5e22B6e3294bad
+      📄 Data: 0x00000000000000000000000000000000000000000000000059d2327313dfaa7f000000000000000000000000000000000000000000007bfbfe77aea4b3520e36
+      🏷 Topics: 0x1c411e9a96e071241c2f21f7726b17ae89e3cab4c78be50e062b03a9fffb 
+bad1
+    - Log 8:
+      🔗 Address: 0x70CcF4cD3CaF08B53577d2c58e5e22B6e3294bad
+      📄 Data: 0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000cbf3fc53bd20e6b5e6000000000000000000000000000000000000000000000000009469b8957371ae0000000000000000000000000000000000000000000000000000000000000000
+      🏷 Topics: 0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159 
+d822,0x0000000000000000000000004b52e831107db187e64498d0df18c72dade57200,0x000000000000000000000000a527a61703d82139f8a06bc30097cc9caa2df5a6
+    - Log 9:
+      🔗 Address: 0xA527a61703D82139F8a06Bc30097cC9CAA2df5A6
+      📄 Data: 0x00000000000000000000000000000000000000000000695d261fc3c80efe80660000000000000000000000000000000000000000000000751ac1e613f8bb0886
+      🏷 Topics: 0x1c411e9a96e071241c2f21f7726b17ae89e3cab4c78be50e062b03a9fffb 
+bad1
+    - Log 10:
+      🔗 Address: 0xA527a61703D82139F8a06Bc30097cC9CAA2df5A6
+      📄 Data: 0x000000000000000000000000000000000000000000000000009469b8957371ae000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a49ee5975225
+      🏷 Topics: 0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159 
+d822,0x0000000000000000000000004b52e831107db187e64498d0df18c72dade57200,0x0000000000000000000000004b52e831107db187e64498d0df18c72dade57200
+--------------------------------------------------------------------------------
+
+📝 Transaction 282
+  🔹 Hash: 0xd83fa8af45ba8ae20668419ac22b5126b32c23f5d95fef793a90d958c7a1ff4f  
+  🔹 From: 0xE6aDF62A01DF85423D6B58aBBBB4Bc060FA44137
+  🔹 To: 0x4B52e831107Db187E64498D0DF18c72dAde57200
+  💸 Value: 0.0 BNB
+  🔢 Nonce: 630812
+  📜 Data: 0x000000000f556f4e47513d1a19be456a9af778d7e1a226b950b82e267ff0f5bb6d836ffb4669dc1e75c3dde0a527a61703d82139f8a06bc30097cc9caa2df5a6137e4df937e7d1f400
+  ⛽ Gas Price: 0.0 Gwei
+  ⛽ Gas Limit: 226793
+  🔥 Max Priority Fee: Legacy TX
+  🔥 Max Fee Per Gas: Legacy TX
+  🔄 Transaction Type: Legacy
+  🏁 Receipt Status: ✅ Success
+  ⛽ Gas Used: 187212
+  🔗 Logs Count: 10
+  📜 Event Logs:
+    - Log 1:
+      🔗 Address: 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c
+      📄 Data: 0x00000000000000000000000000000000000000000000000000003620576c3e90
+      🏷 Topics: 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523 
+b3ef,0x000000000000000000000000a527a61703d82139f8a06bc30097cc9caa2df5a6,0x0000000000000000000000004b52e831107db187e64498d0df18c72dade57200
+    - Log 2:
+      🔗 Address: 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c
+      📄 Data: 0x0000000000000000000000000000000000000000000000000000352261481efc
+      🏷 Topics: 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523 
+b3ef,0x0000000000000000000000004b52e831107db187e64498d0df18c72dade57200,0x0000000000000000000000000f556f4e47513d1a19be456a9af778d7e1a226b9
+    - Log 3:
+      🔗 Address: 0x211FfbE424b90e25a15531ca322adF1559779E45
+      📄 Data: 0x00000000000000000000000000000000000000000000000096ed00e8e2df5101
+      🏷 Topics: 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523 
+b3ef,0x0000000000000000000000000f556f4e47513d1a19be456a9af778d7e1a226b9,0x00000000000000000000000050b82e267ff0f5bb6d836ffb4669dc1e75c3dde0
+    - Log 4:
+      🔗 Address: 0x0F556f4E47513d1a19Be456a9aF778d7e1A226B9
+      📄 Data: 0x0000000000000000000000000000000000000000000017d02d53f526c906e9f4000000000000000000000000000000000000000000000000085e1c065ff5e42e
+      🏷 Topics: 0x1c411e9a96e071241c2f21f7726b17ae89e3cab4c78be50e062b03a9fffb 
+bad1
+    - Log 5:
+      🔗 Address: 0x0F556f4E47513d1a19Be456a9aF778d7e1A226B9
+      📄 Data: 0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000352261481efc00000000000000000000000000000000000000000000000096ed00e8e2df51010000000000000000000000000000000000000000000000000000000000000000
+      🏷 Topics: 0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159 
+d822,0x0000000000000000000000004b52e831107db187e64498d0df18c72dade57200,0x00000000000000000000000050b82e267ff0f5bb6d836ffb4669dc1e75c3dde0
+    - Log 6:
+      🔗 Address: 0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82
+      📄 Data: 0x0000000000000000000000000000000000000000000000000030cc1e287c6647
+      🏷 Topics: 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523 
+b3ef,0x00000000000000000000000050b82e267ff0f5bb6d836ffb4669dc1e75c3dde0,0x000000000000000000000000a527a61703d82139f8a06bc30097cc9caa2df5a6
+    - Log 7:
+      🔗 Address: 0x50b82E267fF0F5bb6D836fFB4669dC1e75C3DDE0
+      📄 Data: 0x0000000000000000000000000000000000000000000000000a43a0ee39233f2500000000000000000000000000000000000000000000002045b134825b967d80
+      🏷 Topics: 0x1c411e9a96e071241c2f21f7726b17ae89e3cab4c78be50e062b03a9fffb 
+bad1
+    - Log 8:
+      🔗 Address: 0x50b82E267fF0F5bb6D836fFB4669dC1e75C3DDE0
+      📄 Data: 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000096ed00e8e2df51010000000000000000000000000000000000000000000000000030cc1e287c66470000000000000000000000000000000000000000000000000000000000000000
+      🏷 Topics: 0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159 
+d822,0x0000000000000000000000004b52e831107db187e64498d0df18c72dade57200,0x000000000000000000000000a527a61703d82139f8a06bc30097cc9caa2df5a6
+    - Log 9:
+      🔗 Address: 0xA527a61703D82139F8a06Bc30097cC9CAA2df5A6
+      📄 Data: 0x00000000000000000000000000000000000000000000695d26508fe6377ae6ad0000000000000000000000000000000000000000000000751ac1aff3a14ec9f6
+      🏷 Topics: 0x1c411e9a96e071241c2f21f7726b17ae89e3cab4c78be50e062b03a9fffb 
+bad1
+    - Log 10:
+      🔗 Address: 0xA527a61703D82139F8a06Bc30097cC9CAA2df5A6
+      📄 Data: 0x0000000000000000000000000000000000000000000000000030cc1e287c66470000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003620576c3e90
+      🏷 Topics: 0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159 
+d822,0x0000000000000000000000004b52e831107db187e64498d0df18c72dade57200,0x0000000000000000000000004b52e831107db187e64498d0df18c72dade57200
+--------------------------------------------------------------------------------
+
+```
+
