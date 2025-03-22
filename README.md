@@ -112,7 +112,7 @@ The raw block data may look like this examle output response:
 }
 ```
 
-```json
+```javascript
 Raw Block Data: {
   hash: '0xb5d628f4e13617199a1e2499cabfc4edccd83c04472b418d15a4bb2229aef743',
   parentHash: '0x2607d0629628653386b11c90f1532a45c9d8133a8370edc5b5d4f0df61bedda9',
