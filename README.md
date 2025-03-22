@@ -281,4 +281,4 @@ gasLimit: Maximum gas allowed for execution.
 
 input: Encoded data for contract calls.
 ```
-👉 Example Code to Log All Transactions in the Latest Block:
+👉 Example Code to Log All "transactions"[ array in the  RAW response json format under Latest Block:]
